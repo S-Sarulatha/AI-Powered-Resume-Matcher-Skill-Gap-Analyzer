@@ -36,20 +36,35 @@ public class AnalysisController {
         Map<String, Map<String, Object>> resultPerResume = new HashMap<>();
 
         for (MultipartFile resume : resumes) {
-            String resumeText = parser.extractText(resume);
-            Set<String> resumeSkills = extractor.extractSkills(resumeText);
-            Map<String, Set<String>> gaps = gapService.analyze(resumeSkills, jdSkills);
+            try {
+                String resumeText = parser.extractText(resume);
+                Set<String> resumeSkills = extractor.extractSkills(resumeText);
+                Map<String, Set<String>> gaps = gapService.analyze(resumeSkills, jdSkills);
 
-            int matchedCount = gaps.get("matched_skills").size();
-            int score = jdSkills.isEmpty() ? 0 : (matchedCount * 100 / jdSkills.size());
+                double experience = extractor.extractExperience(resumeText);
+                Set<String> education = extractor.extractEducation(resumeText);
+                Set<String> projects = extractor.extractProjects(resumeText);
 
-            Map<String, Object> singleResult = new HashMap<>();
-            singleResult.put("match_score", score);
-            singleResult.put("matched_skills", gaps.get("matched_skills"));
-            singleResult.put("missing_skills", gaps.get("missing_skills"));
+                int matchedCount = gaps.get("matched_skills").size();
+                int score = jdSkills.isEmpty() ? 0 : (matchedCount * 100 / jdSkills.size());
 
-            resultPerResume.put(resume.getOriginalFilename(), singleResult);
+                Map<String, Object> singleResult = new HashMap<>();
+                singleResult.put("match_score", score);
+                singleResult.put("matched_skills", gaps.get("matched_skills"));
+                singleResult.put("missing_skills", gaps.get("missing_skills"));
+                singleResult.put("experience_years", experience);
+                singleResult.put("education", education);
+                singleResult.put("projects", projects);
+
+                resultPerResume.put(resume.getOriginalFilename(), singleResult);
+
+            } catch (Exception e) {
+                Map<String, Object> errorResult = new HashMap<>();
+                errorResult.put("error", "Failed to parse resume");
+                resultPerResume.put(resume.getOriginalFilename(), errorResult);
+            }
         }
+
 
         response.put("results", resultPerResume);
         return response;

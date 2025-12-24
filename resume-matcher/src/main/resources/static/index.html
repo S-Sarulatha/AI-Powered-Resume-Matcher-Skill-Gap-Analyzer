@@ -137,12 +137,21 @@
             for (const [filename, result] of Object.entries(results)) {
                 const card = document.createElement('div');
                 card.className = 'resume-card';
-                card.innerHTML = `
-                    <h3>${filename}</h3>
-                    <p>Match Score: <span class="matched">${result.match_score}%</span></p>
-                    <p>Matched Skills: <span class="matched">${result.matched_skills.join(', ')}</span></p>
-                    <p>Missing Skills: <span class="missing">${result.missing_skills.join(', ') || 'None'}</span></p>
-                `;
+				card.innerHTML = `
+				    <h3>${filename}</h3>
+				    <p>Match Score: <span class="matched">${result.match_score}%</span></p>
+				    <p>Matched Skills: <span class="matched">
+				        ${Array.from(result.matched_skills).join(', ')}
+				    </span></p>
+				    <p>Missing Skills: <span class="missing">
+				        ${Array.from(result.missing_skills).join(', ') || 'None'}
+				    </span></p>
+				    <p>Experience: ${result.experience_years} years</p>
+				    <p>Education: ${Array.from(result.education).join(', ')}</p>
+				    <p>Projects / Tools: ${Array.from(result.projects).join(', ') || 'None'}</p>
+				`;
+
+
                 resultsDiv.appendChild(card);
             }
         })
