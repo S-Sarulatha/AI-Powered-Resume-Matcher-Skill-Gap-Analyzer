@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Matcher</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="file"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .resume-card {
+            background: #f9f9f9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .matched {
+            color: green;
+            font-weight: bold;
+        }
+
+        .missing {
+            color: red;
+            font-weight: bold;
+        }
+
+        .eligible {
+            color: green;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .not-eligible {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Resume Matcher</h2>
+
+    <form id="resumeForm" enctype="multipart/form-data">
+        <label>Upload Resumes:</label>
+        <input type="file" name="resumes" multiple required>
+
+        <label>Job Description:</label>
+        <textarea name="jobDescription" rows="5" required></textarea>
+
+        <button type="submit">Analyze Resumes</button>
+        
+    </form>
+
+    <div id="eligibilityResult"></div>
+
+    <div class="results" id="results"></div>
+</div>
+
+<script>
+    const form = document.getElementById('resumeForm');
+    const resultsDiv = document.getElementById('results');
+    const eligibilityDiv = document.getElementById('eligibilityResult');
+
+    // Resume Analyzer
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch('/api/analyze', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultsDiv.innerHTML = '';
+            const results = data.results;
+
+            for (const [filename, result] of Object.entries(results)) {
+                const card = document.createElement('div');
+                card.className = 'resume-card';
+                card.innerHTML = `
+                    <h3>${filename}</h3>
+                    <p>Match Score: <span class="matched">${result.match_score}%</span></p>
+                    <p>Matched Skills: <span class="matched">${result.matched_skills.join(', ')}</span></p>
+                    <p>Missing Skills: <span class="missing">${result.missing_skills.join(', ') || 'None'}</span></p>
+                `;
+                resultsDiv.appendChild(card);
+            }
+        })
+        .catch(() => {
+            resultsDiv.innerHTML = '<p style="color:red;">Error analyzing resumes.</p>';
+        });
+    });
+</script>
+
+</body>
+</html>
