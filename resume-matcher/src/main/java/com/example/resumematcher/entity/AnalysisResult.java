@@ -19,6 +19,9 @@ public class AnalysisResult {
     @Column(length = 2000)
     private String missingSkills;
 
+    @Column(length = 2000)
+    private String skillStrength;
+
     private double experience;
     private LocalDateTime analyzedAt;
     // Getters & Setters
@@ -41,4 +44,12 @@ public class AnalysisResult {
 
     public LocalDateTime getAnalyzedAt() { return analyzedAt; }
     public void setAnalyzedAt(LocalDateTime analyzedAt) { this.analyzedAt = analyzedAt; }
+    public String getSkillStrength() {
+        return skillStrength;
+    }
+
+    public void setSkillStrength(String skillStrength) {
+        this.skillStrength = skillStrength;
+    }
+
 }

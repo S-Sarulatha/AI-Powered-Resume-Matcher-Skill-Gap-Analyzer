@@ -28,13 +28,22 @@ public class SkillExtractorService {
         return found;
     }
     public Set<String> extractJDSkills(String text) {
-        String[] words = text.toLowerCase().split("\\W+");
+
+        Set<String> stopWords = Set.of(
+            "and","or","the","with","to","for","of","in","on","a"
+        );
+
         Set<String> jdSkills = new HashSet<>();
+        String[] words = text.toLowerCase().split("\\W+");
+
         for (String word : words) {
-            jdSkills.add(word);
+            if (word.length() > 2 && !stopWords.contains(word)) {
+                jdSkills.add(word);
+            }
         }
         return jdSkills;
     }
+ 
  // Extract Years of Experience
     public double extractExperience(String text) {
         if (text == null) return 0;

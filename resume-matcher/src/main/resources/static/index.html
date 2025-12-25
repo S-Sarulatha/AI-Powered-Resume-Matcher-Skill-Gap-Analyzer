@@ -148,7 +148,27 @@
 				    </span></p>
 				    <p>Experience: ${result.experience_years} years</p>
 				    <p>Education: ${Array.from(result.education).join(', ')}</p>
-					<p>Skill Strength: ${JSON.stringify(result.skill_strength)}</p>
+					<p><b>Skill Strength:</b></p>
+					<ul>
+					  ${Object.entries(result.skill_strength)
+					    .map(([k,v]) => `<li>${k} : ${v}</li>`)
+					    .join('')}
+					</ul>
+					<p class="${result.eligible ? 'eligible' : 'not-eligible'}">
+					  ${result.eligible ? 'ELIGIBLE' : 'NOT ELIGIBLE'}
+					</p>
+
+					${!result.eligible ? `
+					<p><b>Reasons:</b></p>
+					<ul>
+					  ${result.reasons.map(r => `<li>${r}</li>`).join('')}
+					</ul>
+					` : ''}
+					<p><b>Suggestions:</b></p>
+					<ul>
+					  ${result.recommendations.map(r => `<li>${r}</li>`).join('')}
+					</ul>
+
 				    <p>Projects / Tools: ${Array.from(result.projects).join(', ') || 'None'}</p>
 				`;
 
