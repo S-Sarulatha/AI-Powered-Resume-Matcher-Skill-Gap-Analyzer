@@ -8,12 +8,7 @@ Checks candidate eligibility
 Ranks candidates based on score
 
 📌Technologies Used
-Java
-Spring Boot
-Spring Data JPA
-H2 Database
-HTML, CSS, JavaScript
-Apache PDFBox (for reading PDF resumes)
+Java,Spring Boot,Spring Data JPA,H2 Database,HTML, CSS, JavaScript,Apache PDFBox (for reading PDF resumes)
 
 📌How the System Works
 
