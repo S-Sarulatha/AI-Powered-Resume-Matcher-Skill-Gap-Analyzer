@@ -60,9 +60,8 @@ Highest score appears first
 Controller → Service → Repository → Database
 
 Main Layers:
-
-Controller – Handles API requests
-Service – Business logic (scoring, eligibility, parsing)
-Repository – Database interaction
-Entity – Stores resume analysis data
-Frontend – HTML + JavaScript UI
+📌Controller – Handles API requests
+📌Service – Business logic (scoring, eligibility, parsing)
+📌Repository – Database interaction
+📌Entity – Stores resume analysis data
+📌Frontend – HTML + JavaScript UI
