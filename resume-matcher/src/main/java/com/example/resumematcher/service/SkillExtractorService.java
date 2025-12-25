@@ -1,6 +1,8 @@
 package com.example.resumematcher.service;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -13,7 +15,7 @@ public class SkillExtractorService {
     private static final List<String> SKILLS = List.of(
         "java", "spring boot", "sql", "html",
         "css", "javascript", "docker", "aws",
-        "machine learning", "nlp"
+        "machine learning", "nlp" ,"oops"
     );
 
     public Set<String> extractSkills(String text) {
@@ -128,6 +130,24 @@ public class SkillExtractorService {
         }
         return sb.toString().trim();
     }
+    public Map<String, String> analyzeSkillStrength(String text, Set<String> jdSkills) {
 
+        Map<String, String> strengthMap = new HashMap<>();
+        text = text.toLowerCase();
 
+        for (String skill : jdSkills) {
+            int count = text.split(skill, -1).length - 1;
+
+            if (count == 0) {
+                strengthMap.put(skill, "MISSING");
+            } else if (count == 1) {
+                strengthMap.put(skill, "WEAK");
+            } else {
+                strengthMap.put(skill, "STRONG");
+            }
+        }
+        return strengthMap;
+    }
+
+   
 }

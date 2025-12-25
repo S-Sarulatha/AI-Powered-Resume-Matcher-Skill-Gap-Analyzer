@@ -102,11 +102,11 @@
         <label>Upload Resumes:</label>
         <input type="file" name="resumes" multiple required>
 
-        <label>Job Description:</label>
+        <label>Required skillset:</label>
         <textarea name="jobDescription" rows="5" required></textarea>
 
         <button type="submit">Analyze Resumes</button>
-        
+		
     </form>
 
     <div id="eligibilityResult"></div>
@@ -148,6 +148,7 @@
 				    </span></p>
 				    <p>Experience: ${result.experience_years} years</p>
 				    <p>Education: ${Array.from(result.education).join(', ')}</p>
+					<p>Skill Strength: ${JSON.stringify(result.skill_strength)}</p>
 				    <p>Projects / Tools: ${Array.from(result.projects).join(', ') || 'None'}</p>
 				`;
 
@@ -159,7 +160,40 @@
             resultsDiv.innerHTML = '<p style="color:red;">Error analyzing resumes.</p>';
         });
     });
+	
+	    function loadRankedCandidates() {
+	        fetch('/api/ranked-candidates')
+	            .then(response => response.json())
+	            .then(data => {
+	                const container = document.getElementById('rankedCandidates');
+	                container.innerHTML = ''; // Clear previous
+	                data.forEach(candidate => {
+	                    const div = document.createElement('div');
+	                    div.style.border = "1px solid #ccc";
+	                    div.style.padding = "10px";
+	                    div.style.marginBottom = "10px";
+	                    div.style.borderRadius = "5px";
+	                    
+	                    div.innerHTML = `
+	                        <strong>Candidate:</strong> ${candidate.candidateName} <br>
+	                        <strong>Match Score:</strong> ${candidate.matchScore || 'N/A'} <br>
+	                        
+	                        
+	                    `;
+	                    container.appendChild(div);
+	                });
+	            })
+	            .catch(err => {
+	                console.error('Error fetching ranked candidates', err);
+	            });
+	    }
+
+	    // Load ranked candidates when page loads
+	    window.onload = loadRankedCandidates;
 </script>
+<h2>Ranked Candidates</h2>
+		<div id="rankedCandidates"></div>
+		<button onclick="loadRankedCandidates()">Refresh Ranked Candidates</button>
 
 </body>
 </html>

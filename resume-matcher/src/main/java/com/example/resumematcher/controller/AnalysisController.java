@@ -1,12 +1,15 @@
 package com.example.resumematcher.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.resumematcher.repository.AnalysisResultRepository;
+import com.example.resumematcher.entity.AnalysisResult;
 
 import com.example.resumematcher.service.ResumeParserService;
 import com.example.resumematcher.service.SkillExtractorService;
@@ -25,6 +28,9 @@ public class AnalysisController {
     @Autowired
     private SkillGapService gapService;
 
+    @Autowired
+    private AnalysisResultRepository repository;
+    
     @PostMapping("/analyze")
     public Map<String, Object> analyzeResumes(
             @RequestParam("resumes") MultipartFile[] resumes,
@@ -47,8 +53,22 @@ public class AnalysisController {
 
                 int matchedCount = gaps.get("matched_skills").size();
                 int score = jdSkills.isEmpty() ? 0 : (matchedCount * 100 / jdSkills.size());
+                                Map<String, Object> singleResult = new HashMap<>();
+                                AnalysisResult entity = new AnalysisResult();
+                                entity.setCandidateName(resume.getOriginalFilename());
+                                entity.setMatchScore(score);
+                                entity.setMatchedSkills(String.join(",", gaps.get("matched_skills")));
+                                entity.setMissingSkills(String.join(",", gaps.get("missing_skills")));
+                                entity.setExperience(experience);
+                                entity.setAnalyzedAt(java.time.LocalDateTime.now());
+                                
+                                repository.save(entity);
 
-                Map<String, Object> singleResult = new HashMap<>();
+                                Map<String, String> skillStrength =
+                                        extractor.analyzeSkillStrength(resumeText, jdSkills);
+
+                                singleResult.put("skill_strength", skillStrength);
+
                 singleResult.put("match_score", score);
                 singleResult.put("matched_skills", gaps.get("matched_skills"));
                 singleResult.put("missing_skills", gaps.get("missing_skills"));
@@ -68,5 +88,10 @@ public class AnalysisController {
 
         response.put("results", resultPerResume);
         return response;
+        
     }
+    @GetMapping("/ranked-candidates") 
+    public List<AnalysisResult> getRankedCandidates() { 
+        return repository.findAllByOrderByMatchScoreDesc();
+}
 }
