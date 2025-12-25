@@ -88,7 +88,6 @@ public class AnalysisController {
 
         response.put("results", resultPerResume);
         return response;
-        
     }
     @GetMapping("/ranked-candidates") 
     public List<AnalysisResult> getRankedCandidates() { 

@@ -134,7 +134,6 @@ public class SkillExtractorService {
 
         Map<String, String> strengthMap = new HashMap<>();
         text = text.toLowerCase();
-
         for (String skill : jdSkills) {
             int count = text.split(skill, -1).length - 1;
 

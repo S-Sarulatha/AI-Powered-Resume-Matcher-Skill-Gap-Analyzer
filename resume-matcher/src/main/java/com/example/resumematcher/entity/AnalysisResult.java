@@ -21,7 +21,6 @@ public class AnalysisResult {
 
     private double experience;
     private LocalDateTime analyzedAt;
-
     // Getters & Setters
     public Long getId() { return id; }
 

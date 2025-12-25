@@ -13,7 +13,6 @@ public class SkillGapService {
 
         Set<String> matched = new HashSet<>(resume);
         matched.retainAll(jd);
-
         Set<String> missing = new HashSet<>(jd);
         missing.removeAll(resume);
 
